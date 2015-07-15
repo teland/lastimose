@@ -1,25 +1,45 @@
 var models=require('../models/models.js')
 
-//GET /quizes/question
+//Autoload :consID
+exports.load=function(req,res,next, consId) {
+	models.Isodata.find(consId).then(
+		function(param) {
+			if (param) {
+				req.param=param;
+				next();
+			} else {next(new Error('No existe ubicación ' + consId)); }
+		}
+		).catch(function(error) {next(error);});
+};
 
-exports.idG=function (req,res) {
-	models.Isodata.findAll().then(function(consulta){
-		res.render('consulta/idG',{param: consulta[0].param});
-	})
+//GET /consulta
+
+exports.index=function (req,res) {
+	models.Isodata.findAll().then(
+		function(param){
+		res.render('consulta/index',{param: param});
+	}
+	).catch(function(error) {next(error);})
  
 };
 
-//GET /quizes/answer
+
+//GET /consulta/:id
+
+exports.show=function (req,res) {
+			res.render('consulta/show',{param: req.param});
+	};
+ 
+
+
+//GET /consulta/:id/lista
 
 exports.lista=function (req,res) {
-models.Isodata.findAll().then (function(consulta){
-	if (req.query.ubi===consulta[0].param){
- res.render('consulta/lista',{reparam: 'En '+consulta[0].param+' hay un motor y un bambalinón'});
-} else {
- res.render('consulta/lista',{reparam: 'No hay nada en tal ubicación'});
-}
-})
-
+ var resultado ='No hay nada en tal ubicación';
+ if (req.query.ubi===req.param.reparam)
+ 	{ resultado='En '+req.param.reparam+' hay un motor y un bambalinón';}
+	
+ res.render('consulta/lista',{param: req.param, reparam:resultado });
 };
 
 //GET /author

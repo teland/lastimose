@@ -8,7 +8,13 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'isoBD' });
 });
 
-router.get('/consulta/idG', isoController.idG);
-router.get('/consulta/lista', isoController.lista);
+
+router.param('consId', isoController.load);
+
+router.get('/consulta', isoController.index);
+
+router.get('/consulta/:consId(\\d+)', isoController.show);
+router.get('/consulta/:consId(\\d+)/lista', isoController.lista);
+
 router.get('/autor', isoController.autor);
 module.exports = router;
